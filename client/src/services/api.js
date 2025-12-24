@@ -183,7 +183,7 @@ export const getRestaurants = async () => {
         await delay();
         return DB.get('restaurants'); // Retourne tous les restos créés
     }
-    const res = await api.get('/client');
+    const res = await api.get('/restau'); // Correction: la route backend est /api/restau
     return res.data;
 };
 
@@ -246,7 +246,10 @@ export const createReservation = async (data) => {
 
         return newRes;
     }
-    const res = await api.post(`/client/${data.restaurantId}/reservation`, data);
+    const res = await api.post(`/reservation`, { // Correction path /api/reservation
+        restauId: data.restaurantId,
+        ...data
+    });
     return res.data;
 };
 
@@ -260,9 +263,7 @@ export const getClientReservations = async () => {
         // Filtrer celles faites par ce user
         return allRes.filter(r => r.user?._id === user._id);
     }
-    const res = await axios.get('http://localhost:5000/api/reservation/profil', {
-        headers: { 'x-auth-token': localStorage.getItem('token') }
-    });
+    const res = await api.get('/reservation/profil');
     return res.data;
 };
 
