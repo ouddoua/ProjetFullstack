@@ -21,12 +21,42 @@ exports.createReservation = async (req, res) => {
     const { restauId, date, heure, nb_personnes } = req.body;
 
     try {
+<<<<<<< Updated upstream
+=======
+        // --- ÉTAPE A : RE-VÉRIFICATION DE DISPONIBILITÉ (Très important) ---
+        const start = new Date(dateTime);
+        const end = new Date(start.getTime() + durationMinutes * 60000);
+
+        // Vérifier si la table spécifiée est libre sur ce créneau
+        const conflict = await Reservation.findOne({
+            table: tableId,
+            status: { $in: ['attente', 'confirme'] },
+            $or: [
+                { dateTime: { $lt: end, $gte: start } }, // Commence pendant
+                { dateTime: { $lte: start }, $expr: { $gt: [{ $add: ['$dateTime', { $multiply: ['$durationMinutes', 60000] }] }, start] } } // Finit après le début
+            ]
+        });
+
+        if (conflict) {
+            return res.status(400).json({ msg: "Désolé, cette table a été réservée entre-temps." });
+        }
+
+        // --- ÉTAPE B : CRÉATION ---
+>>>>>>> Stashed changes
         const newReservation = new Reservation({
             user: req.user.id,
             restau: restauId,
+<<<<<<< Updated upstream
             date,
             heure,
             nb_personnes
+=======
+            dateTime: start,
+            durationMinutes: durationMinutes,
+            numberOfGuests: numberOfGuests,
+            table: tableId,
+            status: 'attente' // Par défaut
+>>>>>>> Stashed changes
         });
 
         const reservation = await newReservation.save();

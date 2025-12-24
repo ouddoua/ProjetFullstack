@@ -11,13 +11,19 @@ const reservationSchema = new mongoose.Schema({
         ref: 'Restau',
         required: true
     },
-    date: {
+    table: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Table',
+        required: true
+    },
+    dateTime: { // REMPLACE 'date' ET 'heure' : Un seul champ Date/Heure complet
         type: Date,
         required: true
     },
-    heure: {
-        type: String, // Format "HH:mm"
-        required: true
+    numberOfGuests: {
+        type: Number,
+        required: true,
+        min: 1
     },
     nb_personnes: {
         type: Number,
@@ -27,11 +33,13 @@ const reservationSchema = new mongoose.Schema({
         type: String,
         enum: ['attente', 'confirme', 'annule'],
         default: 'attente'
-    },
-    createdAt: {
-        type: Date,
-        default: Date.now
     }
-});
+},
+    {
+        timestamps: true // Utilisation de l'option timestamps
+    });
 
+// Index important pour la performance des requêtes de disponibilité :
+// Chercher les réservations pour un restaurant à un moment donné.
+reservationSchema.index({ restau: 1, dateTime: 1, table: 1 });
 module.exports = mongoose.model('Reservation', reservationSchema);

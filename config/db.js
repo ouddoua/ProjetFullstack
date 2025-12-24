@@ -2,15 +2,22 @@ const mongoose = require('mongoose');
 
 const connectDB = async () => {
     try {
-        const conn = await mongoose.connect(process.env.MONGO_URI, {
-            serverSelectionTimeoutMS: 30000, // Keep trying to send operations for 30 seconds
-            socketTimeoutMS: 45000, // Close sockets after 45 seconds of inactivity
+        // CONFIGURATION GAGNANTE (Celle qui a affiché "SUCCÈS" dans test-db.js)
+        const dbURI = "mongodb://aya_ouddou:52406785@193.48.125.44:27017/aya_ouddou?authSource=aya_ouddou&directConnection=true";
+
+        console.log("Tentative de connexion Mongoose (Mode Force IPv4)...");
+
+        const conn = await mongoose.connect(dbURI, {
+            serverSelectionTimeoutMS: 5000,
+            family: 4 // Force IPv4 : CRUCIAL pour le réseau de l'université
         });
 
         console.log(`MongoDB Connected: ${conn.connection.host}`);
     } catch (err) {
         console.error(`Error: ${err.message}`);
-        process.exit(1);
+        // Ne pas quitter le processus, réessayer
+        console.log("Nouvelle tentative dans 5 secondes...");
+        setTimeout(connectDB, 5000);
     }
 };
 
