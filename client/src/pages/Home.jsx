@@ -21,45 +21,60 @@ const Home = () => {
             {/* --- HERO SECTION --- */}
             <section style={{
                 minHeight: '100vh',
+                position: 'relative',
                 display: 'flex',
                 alignItems: 'center',
-                position: 'relative',
                 paddingTop: '80px',
-                overflow: 'hidden'
+                overflow: 'hidden',
+                backgroundColor: '#0f172a' // Fallback color dark
             }}>
-                {/* Background Image Darker */}
+                {/* 1. Background Image Layer */}
                 <div style={{
-                    position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
-                    backgroundImage: 'url("https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=2070&auto=format&fit=crop")',
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                    zIndex: -2,
-                    filter: 'brightness(0.6)' // Assombri l'image pour le contraste
-                }} className="animate-float" />
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    zIndex: 0
+                }}>
+                    <div style={{
+                        width: '100%',
+                        height: '100%',
+                        backgroundImage: 'url("https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=2070&auto=format&fit=crop")',
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                        filter: 'brightness(0.6)',
+                        transform: 'scale(1.1)' // Zoom léger
+                    }} className="animate-float" />
+                </div>
 
-                {/* Overlay Dégradé Plus Sombre pour lisibilité */}
+                {/* 2. Dark Gradient Overlay Layer */}
                 <div style={{
-                    position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
-                    background: 'linear-gradient(135deg, rgba(0,0,0,0.8) 0%, rgba(20, 20, 30, 0.7) 100%)',
-                    zIndex: -1,
-                    backdropFilter: 'blur(2px)'
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 41, 59, 0.8) 100%)',
+                    zIndex: 1,
+                    backdropFilter: 'blur(2px)' // Flou artistique
                 }} />
 
-                <div className="container" style={{ position: 'relative', zIndex: 1 }}>
+                {/* 3. Content Layer (Must be on top) */}
+                <div className="container" style={{ position: 'relative', zIndex: 10, width: '100%' }}>
                     <div style={{ maxWidth: '900px', margin: '0 auto', textAlign: 'center', color: 'white' }}>
 
                         {/* Badge Animé */}
-                        <div className="flex-center animate-fade-in-up" style={{ marginBottom: '25px' }}>
+                        <div className="flex-center animate-fade-in-up" style={{ marginBottom: '30px' }}>
                             <span className="shine-badge" style={{
                                 padding: '10px 24px',
                                 borderRadius: '50px',
                                 fontSize: '0.95rem',
                                 fontWeight: '600',
-                                border: '1px solid rgba(255,255,255,0.3)',
+                                border: '1px solid rgba(255,255,255,0.2)',
                                 display: 'flex', alignItems: 'center', gap: '10px',
-                                background: 'rgba(255,255,255,0.15)',
-                                backdropFilter: 'blur(10px)',
-                                color: '#ffffff'
+                                background: 'rgba(255,255,255,0.1)',
+                                color: '#fff'
                             }}>
                                 <span style={{ width: '8px', height: '8px', background: '#4ade80', borderRadius: '50%', boxShadow: '0 0 10px #4ade80' }}></span>
                                 La plateforme #1 de réservation en France
@@ -67,13 +82,13 @@ const Home = () => {
                         </div>
 
                         <h1 className="animate-fade-in-up delay-100" style={{
-                            fontSize: 'clamp(3rem, 6vw, 5rem)',
+                            fontSize: 'clamp(3rem, 5vw, 4.5rem)',
                             lineHeight: 1.1,
                             marginBottom: '30px',
                             fontWeight: 800,
                             letterSpacing: '-2px',
                             color: '#ffffff',
-                            textShadow: '0 4px 10px rgba(0,0,0,0.3)'
+                            textShadow: '0 10px 30px rgba(0,0,0,0.5)'
                         }}>
                             Réservez l'excellence <br />
                             <span style={{
@@ -81,40 +96,41 @@ const Home = () => {
                                 WebkitBackgroundClip: 'text',
                                 backgroundClip: 'text',
                                 color: 'transparent',
+                                display: 'inline-block'
                             }}>en un clic.</span>
                         </h1>
 
                         <p className="animate-fade-in-up delay-200" style={{
-                            fontSize: '1.35rem', color: '#e2e8f0', marginBottom: '50px',
-                            lineHeight: 1.6, maxWidth: '750px', marginInline: 'auto', fontWeight: 400,
-                            textShadow: '0 2px 4px rgba(0,0,0,0.5)'
+                            fontSize: '1.25rem', color: '#e2e8f0', marginBottom: '50px',
+                            lineHeight: 1.6, maxWidth: '700px', marginInline: 'auto', fontWeight: 400,
+                            textShadow: '0 2px 5px rgba(0,0,0,0.5)'
                         }}>
                             Une sélection exclusive des meilleures tables.
-                            Vérifiez la disponibilité en temps réel, réservez instantanément et profitez.
+                            Vérifiez la disponibilité en temps réel, réservez instantanément et profitez d'une expérience gastronomique unique.
                         </p>
 
-                        {/* Search Box Flottante */}
+                        {/* Search Box */}
                         <div className="animate-fade-in-up delay-300" style={{
                             background: 'white',
-                            padding: '10px',
+                            padding: '8px',
                             borderRadius: '50px',
                             display: 'flex',
                             gap: '10px',
-                            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
-                            maxWidth: '800px',
+                            boxShadow: '0 20px 50px -10px rgba(0, 0, 0, 0.5)',
+                            maxWidth: '700px',
                             margin: '0 auto 60px auto',
-                            border: '1px solid rgba(255,255,255,0.5)'
+                            alignItems: 'center'
                         }}>
-                            <div style={{ flex: 1, position: 'relative', display: 'flex', alignItems: 'center' }}>
-                                <Search size={24} color="#f97316" style={{ marginLeft: '20px' }} />
-                                <input type="text" placeholder="Rechercher 'Gastronomique', 'Lyon'..."
+                            <div style={{ flex: 1, position: 'relative', display: 'flex', alignItems: 'center', paddingLeft: '20px' }}>
+                                <Search size={22} color="#f97316" />
+                                <input type="text" placeholder="Restaurant, cuisine, ville..."
                                     style={{
-                                        width: '100%', padding: '16px 20px', border: 'none',
-                                        fontSize: '1.1rem', fontFamily: 'inherit', outline: 'none', background: 'transparent', color: '#1e293b'
+                                        width: '100%', padding: '14px 16px', border: 'none',
+                                        fontSize: '1rem', fontFamily: 'inherit', outline: 'none', background: 'transparent', color: '#1e293b'
                                     }}
                                 />
                             </div>
-                            <button className="btn btn-primary" style={{ padding: '16px 45px', fontSize: '1.1rem', borderRadius: '40px' }}>
+                            <button className="btn btn-primary" style={{ padding: '14px 40px', fontSize: '1rem', borderRadius: '40px' }}>
                                 Trouver
                             </button>
                         </div>
