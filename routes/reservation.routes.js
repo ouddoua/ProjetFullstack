@@ -9,6 +9,9 @@ const authMiddleware = require('../middlewares/authMiddleware');
 // Note: Le chemin monté dans app.js est /api, donc ça fera /api/restau
 router.get('/restau', reservationController.getPublicRestaus);
 
+// Get : /api/client/:id/plan : Obtenir le plan d'un restau pour la 3D
+router.get('/client/:id/plan', reservationController.getRestauPlan);
+
 // Routes protégées
 router.use(authMiddleware);
 
