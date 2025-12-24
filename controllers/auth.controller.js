@@ -6,44 +6,22 @@ const jwt = require('jsonwebtoken');
 // @route   POST /api/auth/register
 // @access  Public
 exports.register = async (req, res) => {
-<<<<<<< Updated upstream
     const { nom, email, password, role, telephone } = req.body;
-=======
-
-    const { nom, email, password, role, telephone } = req.body;
-
-    // Validation des données de base 
-    // Note: Le frontend envoie 'nom' et 'telephone', le modèle attend 'name' (optionnel ?) et 'phone' ? vérifions le modèle
-    // Si le modèle User.js a 'name' comme champ, on doit faire le mapping ici.
-
-    if (!nom || !email || !password) {
-        return res.status(400).json({ msg: 'Veuillez fournir un nom, un email et un mot de passe.' });
-    }
->>>>>>> Stashed changes
 
     try {
         // Vérifier si l'utilisateur existe déjà
-        let user = await User.findOne({ email }).maxTimeMS(20000);
+        let user = await User.findOne({ email });
         if (user) {
             return res.status(400).json({ msg: 'Un utilisateur avec cet email existe déjà' });
         }
 
-        // Créer un nouvel utilisateur avec Mapping Frontend -> Backend Model
-        // Supposons que le User Model a 'name' et 'phone'
+        // Créer un nouvel utilisateur
         user = new User({
-<<<<<<< Updated upstream
             nom,
             email,
             password,
             role,
             telephone
-=======
-            name: nom,
-            email,
-            password,
-            role,
-            phone: telephone
->>>>>>> Stashed changes
         });
 
         // Le mot de passe sera hashé par le middleware pre-save du modèle

@@ -25,10 +25,7 @@ const reservationSchema = new mongoose.Schema({
         required: true,
         min: 1
     },
-    nb_personnes: {
-        type: Number,
-        required: true
-    },
+
     status: {
         type: String,
         enum: ['attente', 'confirme', 'annule'],

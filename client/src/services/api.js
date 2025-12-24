@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // --- CONFIGURATION : BASE DE DONNÉES LOCALE (BROWSER) ---
 // Remplace le Backend défaillant par une sauvegarde dans le navigateur.
-const USE_LOCAL_STORAGE_DB = true;
+const USE_LOCAL_STORAGE_DB = false;
 
 // --- MINI MOTEUR DE BASE DE DONNÉES (LOCALSTORAGE) ---
 const DB = {

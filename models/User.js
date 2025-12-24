@@ -33,11 +33,8 @@ const userSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     }
-<<<<<<< Updated upstream
-=======
 }, {
     timestamps: true
->>>>>>> Stashed changes
 });
 
 // Hasher le mot de passe avant de sauvegarder

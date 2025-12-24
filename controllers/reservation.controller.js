@@ -18,11 +18,9 @@ exports.getPublicRestaus = async (req, res) => {
 // @route   POST /api/reservation
 // @access  Privé (Client)
 exports.createReservation = async (req, res) => {
-    const { restauId, date, heure, nb_personnes } = req.body;
+    const { restauId, tableId, dateTime, durationMinutes, numberOfGuests } = req.body;
 
     try {
-<<<<<<< Updated upstream
-=======
         // --- ÉTAPE A : RE-VÉRIFICATION DE DISPONIBILITÉ (Très important) ---
         const start = new Date(dateTime);
         const end = new Date(start.getTime() + durationMinutes * 60000);
@@ -42,21 +40,14 @@ exports.createReservation = async (req, res) => {
         }
 
         // --- ÉTAPE B : CRÉATION ---
->>>>>>> Stashed changes
         const newReservation = new Reservation({
             user: req.user.id,
             restau: restauId,
-<<<<<<< Updated upstream
-            date,
-            heure,
-            nb_personnes
-=======
             dateTime: start,
             durationMinutes: durationMinutes,
             numberOfGuests: numberOfGuests,
             table: tableId,
             status: 'attente' // Par défaut
->>>>>>> Stashed changes
         });
 
         const reservation = await newReservation.save();
