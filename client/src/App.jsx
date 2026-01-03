@@ -36,3 +36,12 @@ function App() {
 }
 
 export default App;
+/*App.jsx affiche la page d'inscription.
+
+AuthContext.jsx (le fournisseur de données) contient la logique pour appeler l'API.
+
+L'API envoie la requête au Routeur du backend (auth.routes.js).
+
+Le Routeur transmet le travail au Controller (auth.controller.js).
+
+Le Controller enregistre l'utilisateur dans la base de données.*/

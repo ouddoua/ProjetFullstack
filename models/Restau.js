@@ -56,7 +56,7 @@ const restauSchema = new mongoose.Schema({
     status: {
         type: String,
         enum: ['attente', 'valide'],
-        default: 'attente'
+        default:'valide'
     }
 },
     {

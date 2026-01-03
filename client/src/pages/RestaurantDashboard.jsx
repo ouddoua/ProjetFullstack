@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom'; 
 import { LayoutDashboard, Utensils, CalendarDays, Armchair, Save, CheckCircle, XCircle, Clock, Loader2 } from 'lucide-react';
 import {
     getRestaurantProfile,
@@ -9,6 +10,7 @@ import {
 } from '../services/api';
 
 const RestaurantDashboard = () => {
+    const navigate = useNavigate(); // Initialisez le hook
     const [activeTab, setActiveTab] = useState('profil');
     const [loading, setLoading] = useState(true);
     const [msg, setMsg] = useState(null); // Pour afficher succès/erreur
@@ -25,33 +27,32 @@ const RestaurantDashboard = () => {
 
     // Charger les données au montage
     useEffect(() => {
-        const loadData = async () => {
-            try {
-                // 1. Charger le profil (contient aussi les tables)
-                const restauData = await getRestaurantProfile();
-                setProfile({
-                    nom: restauData.nom,
-                    adresse: restauData.adresse,
-                    cuisine: restauData.cuisine,
-                    description: restauData.description || ''
-                });
-                if (restauData.tables) {
-                    setTables(restauData.tables);
-                }
-
-                // 2. Charger les réservations
-                const resData = await getRestaurantReservations();
-                // Adapter format si nécessaire
-                setReservations(resData);
-
-            } catch (err) {
-                console.error("Erreur chargement dashboard", err);
-                // Si 404 (pas de profil), on laisse vide pour créer
-            } finally {
-                setLoading(false);
+    const token = localStorage.getItem('token'); // Vérifiez votre méthode de stockage
+    if (!token) {
+        navigate('/login');} // Redirige si plus de token
+    const loadData = async () => {
+        try {
+            setLoading(true);
+            const restauData = await getRestaurantProfile();
+            // Si on trouve un restau, on remplit le formulaire
+            setProfile({
+                nom: restauData.nom || '',
+                adresse: restauData.adresse || '',
+                cuisine: restauData.cuisine || '',
+                description: restauData.description || ''
+            });
+        } catch (err) {
+            // Si l'erreur est 404, c'est que c'est un nouveau compte, on ne log pas d'erreur
+            if (err.response && err.response.status === 404) {
+                console.log("Nouveau restaurateur : aucun profil à charger.");
+            } else {
+                console.error("Erreur technique lors du chargement", err);
             }
-        };
-        loadData();
+        } finally {
+            setLoading(false);
+        }
+    };
+    loadData();
     }, []);
 
     // Handlers
@@ -71,13 +72,21 @@ const RestaurantDashboard = () => {
 
     // Actions API
     const saveProfile = async () => {
-        try {
-            await updateRestaurantProfile(profile);
-            showMsg('success', 'Profil mis à jour avec succès !');
-        } catch (err) {
-            showMsg('error', 'Erreur lors de la mise à jour.');
-        }
-    };
+    try {
+        console.log("Envoi des données au serveur...", profile);
+        
+        const response = await updateRestaurantProfile(profile);
+        
+        // ✅ LOG DE CONFIRMATION FRONTEND
+        console.log("✅ RÉPONSE SERVEUR REÇUE :", response);
+        
+        showMsg('success', 'Profil enregistré avec succès dans la base !');
+    } catch (err) {
+        // ❌ LOG D'ERREUR FRONTEND
+        console.error("ÉCHEC DE L'ENREGISTREMENT :", err.response?.data || err.message);
+        showMsg('error', 'Erreur lors de la mise à jour.');
+    }
+};
 
     const savePlan = async () => {
         try {
@@ -334,3 +343,4 @@ const dateBoxStyle = {
 };
 
 export default RestaurantDashboard;
+//Andi mochkla el restau yetsajel el statut mteou en attente w andy mochkla fel plan les plan matsirech lenregistrement mtehhom w lezmeni nchouf fazet el tables wel plan deja namel haja makhyr w nefhem kifeh namel table sur plan 

@@ -3,6 +3,11 @@ const router = express.Router();
 const restauController = require('../controllers/restau.controller');
 const authMiddleware = require('../middlewares/authMiddleware');
 
+
+// --- 1. ROUTE PUBLIQUE (Pour Home.jsx) ---
+// Cette route doit être AVANT les middlewares de protection
+router.get('/', restauController.getRestaus); // <-- AJOUTE CETTE LIGNE
+
 // Middleware pour toutes ces routes, car dédiées au restaurateur connecté
 router.use(authMiddleware);
 

@@ -15,7 +15,8 @@ const Home = () => {
         };
         loadRestos();
     }, []);
-
+    console.log("Type de restaurants :", typeof restaurants);
+    console.log("Contenu de restaurants :", restaurants);
     return (
         <div style={{ overflowX: 'hidden' }}>
             {/* --- HERO SECTION --- */}
@@ -153,8 +154,8 @@ const Home = () => {
 
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '30px' }}>
                         {restaurants.length === 0 ? <p>Chargement des restaurants...</p> :
-                            restaurants.map((restau, index) => (
-                                <Link key={restau._id} to={`/restaurant/${restau._id}`} style={{ textDecoration: 'none' }}>
+                            Array.isArray(restaurants) && restaurants.map((restau, index) => (
+                                    <Link key={restau._id} to={`/restaurant/${restau._id}`} style={{ textDecoration: 'none' }}>
                                     <div className="hover-card" style={{
                                         background: 'white', borderRadius: '24px', overflow: 'hidden', height: '100%',
                                         display: 'flex', flexDirection: 'column', border: '1px solid #e2e8f0',
@@ -174,7 +175,7 @@ const Home = () => {
 
                                         <div style={{ padding: '24px', flex: 1, display: 'flex', flexDirection: 'column' }}>
                                             <h3 style={{ fontSize: '1.4rem', fontWeight: 700, color: '#0f172a', margin: '0 0 8px 0' }}>
-                                                {restau.name || restau.nom}
+                                                {restau.nom || restau.nom}
                                             </h3>
                                             <p style={{ color: '#475569', fontSize: '1rem', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '6px' }}>
                                                 <Utensils size={16} /> {restau.cuisine}

@@ -1,6 +1,18 @@
 const Restau = require('../models/Restau');
 const Reservation = require('../models/Reservation');
 
+
+exports.getRestaus = async (req, res) => {
+    try {
+        const restaurants = await Restau.find({ status: 'valide' });
+        //NE RENVOIE QUE LE TABLEAU. 
+        //Ne mets pas de { message: "..." }, sinon .map() ne marchera pas.
+        res.json(restaurants); 
+    } catch (err) {
+        res.status(500).json({ msg: "Erreur serveur" });
+    }
+};
+
 // @desc    Créer ou mettre à jour le profil du restaurant
 // @route   POST /api/restau/profil
 // @access  Privé (Restaurateur)
@@ -14,9 +26,10 @@ exports.createOrUpdateProfile = async (req, res) => {
             // Update
             restau = await Restau.findOneAndUpdate(
                 { owner: req.user.id },
-                { $set: { nom, adresse, cuisine, description } },
+                { $set: { nom, adresse, cuisine, description, status: 'valide' } }, 
                 { new: true }
             );
+            console.log("RESTAURANT MIS À JOUR EN BASE :", restau);
             return res.json(restau);
         }
 
@@ -26,33 +39,42 @@ exports.createOrUpdateProfile = async (req, res) => {
             nom,
             adresse,
             cuisine,
-            description
+            description,
+            status: 'valide'
         });
 
         await restau.save();
-        res.json(restau);
+        console.log("NOUVEAU RESTAURANT ENREGISTRÉ EN BASE :", restau);
     } catch (err) {
-        console.error(err.message);
-        res.status(500).send('Erreur serveur');
+        console.error("ERREUR LORS DE L'ENREGISTREMENT :", err.message);
+        res.status(500).json({ msg: 'Erreur serveur' });
     }
-};
+    };
+
 
 // @desc    Récupérer les infos du profil restaurant
 // @route   GET /api/restau/profil
 // @access  Privé (Restaurateur)
 exports.getProfile = async (req, res) => {
     try {
-        const restau = await Restau.findOne({ owner: req.user.id });
-        if (!restau) {
-            return res.status(404).json({ msg: 'Aucun restaurant trouvé pour cet utilisateur' });
+        // Sécurité supplémentaire
+        if (!req.user) {
+            return res.status(401).json({ msg: 'Non autorisé, token manquant' });
         }
+
+        const restau = await Restau.findOne({ owner: req.user.id });
+        
+        if (!restau) {
+            // Renvoyer 404 est normal pour un nouveau restaurateur
+            return res.status(404).json({ msg: 'Aucun restaurant trouvé' });
+        }
+        
         res.json(restau);
     } catch (err) {
-        console.error(err.message);
-        res.status(500).send('Erreur serveur');
+        console.error("ERREUR PROFIL:", err.message);
+        res.status(500).json({ msg: 'Erreur serveur' });
     }
 };
-
 // @desc    Mettre à jour le plan (tables) du restaurant
 // @route   PUT /api/restau/plan
 // @access  Privé (Restaurateur)

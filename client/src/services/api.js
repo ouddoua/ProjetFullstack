@@ -45,14 +45,15 @@ const api = axios.create({
     headers: { 'Content-Type': 'application/json' },
 });
 
-api.interceptors.request.use(
-    (config) => {
-        const token = localStorage.getItem('token');
-        if (token) config.headers['x-auth-token'] = token;
-        return config;
-    },
-    (error) => Promise.reject(error)
-);
+// services/api.js
+api.interceptors.request.use((config) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+        // Vérifie que ton middleware auth côté Node lit bien ce nom de header !
+        config.headers['x-auth-token'] = token; 
+    }
+    return config;
+});
 
 // --- FONCTIONS HYBRIDES (MOCK PERSISTANT vs RÉEL) ---
 
@@ -72,6 +73,7 @@ export const loginUser = async (email, password) => {
         return { token, user };
     }
     const res = await api.post('/auth/login', { email, password });
+    localStorage.setItem('token', res.data.token);
     return res.data;
 };
 
@@ -87,6 +89,7 @@ export const registerUser = async (userData) => {
         return { token, user: newUser };
     }
     const res = await api.post('/auth/register', userData);
+    localStorage.setItem('token', res.data.token); // ✅ stocker le token
     return res.data;
 };
 

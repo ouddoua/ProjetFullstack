@@ -3,8 +3,7 @@ const mongoose = require('mongoose');
 const connectDB = async () => {
     try {
         // CONFIGURATION GAGNANTE (Celle qui a affiché "SUCCÈS" dans test-db.js)
-        const dbURI = "mongodb://aya_ouddou:52406785@193.48.125.44:27017/aya_ouddou?authSource=aya_ouddou&directConnection=true";
-
+        const dbURI = "mongodb://mariem_khedhira:52406826@193.48.125.44:27017/mariem_khedhira";
         console.log("Tentative de connexion Mongoose (Mode Force IPv4)...");
 
         const conn = await mongoose.connect(dbURI, {

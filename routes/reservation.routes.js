@@ -12,8 +12,6 @@ router.get('/restau', reservationController.getPublicRestaus);
 // Get : /api/client/:id/plan : Obtenir le plan d'un restau pour la 3D
 router.get('/client/:id/plan', reservationController.getRestauPlan);
 
-// Routes protégées
-router.use(authMiddleware);
 
 // Post : /api/reservation : Créer une nouvelle réservation
 router.post('/reservation', reservationController.createReservation);
