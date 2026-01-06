@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { UtensilsCrossed, LogIn, UserPlus, User } from 'lucide-react';
 import { AuthContext } from '../context/AuthContext';
 
 const Navbar = () => {
     const { user, logout } = useContext(AuthContext);
+    const navigate = useNavigate();
     const [scrolled, setScrolled] = useState(false);
     const location = useLocation();
     const isHome = location.pathname === '/';
@@ -18,6 +19,11 @@ const Navbar = () => {
     }, []);
 
     const textColor = scrolled || !isHome ? 'var(--color-text)' : 'white';
+
+    const handleLogout = () => {
+        logout();
+        navigate('/login');
+    };
 
     return (
         <nav style={{
@@ -60,7 +66,7 @@ const Navbar = () => {
                                     <User size={18} />
                                     {user.role === 'restaurateur' ? 'Mon Restaurant' : 'Mon Espace'}
                                 </Link>
-                                <button onClick={logout} className="btn" style={{
+                                <button onClick={handleLogout} className="btn" style={{
                                     background: 'transparent',
                                     color: textColor,
                                     border: scrolled || !isHome ? '2px solid #e2e8f0' : '2px solid rgba(255,255,255,0.3)',

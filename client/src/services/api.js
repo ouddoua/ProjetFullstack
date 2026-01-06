@@ -50,7 +50,7 @@ api.interceptors.request.use((config) => {
     const token = localStorage.getItem('token');
     if (token) {
         // Vérifie que ton middleware auth côté Node lit bien ce nom de header !
-        config.headers['x-auth-token'] = token; 
+        config.headers['x-auth-token'] = token;
     }
     return config;
 });
@@ -190,13 +190,57 @@ export const getRestaurants = async () => {
     return res.data;
 };
 
+
+export const uploadPlanImage = async (formData) => {
+    if (USE_LOCAL_STORAGE_DB) {
+        await delay();
+        return { imageUrl: "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?q=80&w=1000&auto=format&fit=crop" };
+    }
+    const res = await api.post('/restau/plan/upload', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+    });
+    return res.data;
+};
+
+export const saveRestaurantPlan = async (planData) => {
+    if (USE_LOCAL_STORAGE_DB) {
+        await delay();
+        const user = JSON.parse(localStorage.getItem('currentUser'));
+        const restau = DB.findOne('restaurants', { owner: user._id });
+        if (!restau) throw { message: "Restau introuvable" };
+        DB.update('restaurants', restau._id, { plan: planData });
+        return { msg: "Plan sauvegardé" };
+    }
+    const res = await api.post('/restau/plan', planData);
+    return res.data;
+};
+
+export const getRestaurantPlan = async () => {
+    if (USE_LOCAL_STORAGE_DB) {
+        await delay();
+        const user = JSON.parse(localStorage.getItem('currentUser'));
+        const restau = DB.findOne('restaurants', { owner: user._id });
+        return restau ? restau.plan : null;
+    }
+    const res = await api.get('/restau/plan');
+    return res.data;
+};
+
+export const getPublicPlan = async (restauId) => {
+    if (USE_LOCAL_STORAGE_DB) {
+        return getActivePlanForClient(restauId);
+    }
+    // Route backend définie dans reservation.routes.js: router.get('/client/:id/plan', ...)
+    const res = await api.get(`/client/${restauId}/plan`);
+    return res.data;
+};
+
 export const getActivePlanForClient = async (restaurantId) => {
     if (USE_LOCAL_STORAGE_DB) {
         await delay();
         const restau = DB.findById('restaurants', restaurantId);
         if (!restau) throw { message: "Restau introuvable" };
 
-        // Générer les positions basées sur les tables sauvegardées
         let positions = [];
         if (restau.tables && restau.tables.length > 0) {
             positions = restau.tables.map(t => ({
@@ -207,11 +251,9 @@ export const getActivePlanForClient = async (restaurantId) => {
                 status: 'available'
             }));
         } else {
-            // Fallback si le restaurateur n'a pas fait son plan
             positions = [
                 { tableId: "t1", tableNumber: 1, capacity: 2, x: 100, y: 100, rotation: 0, status: "available" },
-                { tableId: "t2", tableNumber: 2, capacity: 4, x: 250, y: 250, rotation: 45, status: "available" },
-                { tableId: "t3", tableNumber: 3, capacity: 6, x: 400, y: 120, rotation: 0, status: "available" }
+                { tableId: "t2", tableNumber: 2, capacity: 4, x: 250, y: 250, rotation: 45, status: "available" }
             ];
         }
 
@@ -220,6 +262,7 @@ export const getActivePlanForClient = async (restaurantId) => {
             positions
         };
     }
+    // Use the public route matching reservation.routes.js
     const res = await api.get(`/client/${restaurantId}/plan`);
     return res.data;
 };

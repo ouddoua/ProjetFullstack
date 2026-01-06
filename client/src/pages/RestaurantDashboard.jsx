@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom'; 
+import { useNavigate } from 'react-router-dom';
 import { LayoutDashboard, Utensils, CalendarDays, Armchair, Save, CheckCircle, XCircle, Clock, Loader2 } from 'lucide-react';
 import {
     getRestaurantProfile,
@@ -8,6 +8,7 @@ import {
     getRestaurantReservations,
     updateReservationStatus as apiUpdateStatus
 } from '../services/api';
+import PlanEditor from '../components/plan/PlanEditor';
 
 const RestaurantDashboard = () => {
     const navigate = useNavigate(); // Initialisez le hook
@@ -26,33 +27,49 @@ const RestaurantDashboard = () => {
     const [reservations, setReservations] = useState([]);
 
     // Charger les données au montage
+    // Charger les données au montage
     useEffect(() => {
-    const token = localStorage.getItem('token'); // Vérifiez votre méthode de stockage
-    if (!token) {
-        navigate('/login');} // Redirige si plus de token
-    const loadData = async () => {
-        try {
-            setLoading(true);
-            const restauData = await getRestaurantProfile();
-            // Si on trouve un restau, on remplit le formulaire
-            setProfile({
-                nom: restauData.nom || '',
-                adresse: restauData.adresse || '',
-                cuisine: restauData.cuisine || '',
-                description: restauData.description || ''
-            });
-        } catch (err) {
-            // Si l'erreur est 404, c'est que c'est un nouveau compte, on ne log pas d'erreur
-            if (err.response && err.response.status === 404) {
-                console.log("Nouveau restaurateur : aucun profil à charger.");
-            } else {
-                console.error("Erreur technique lors du chargement", err);
+        const token = localStorage.getItem('token'); // Vérifiez votre méthode de stockage
+        if (!token) {
+            navigate('/login');
+        } // Redirige si plus de token
+        const loadData = async () => {
+            try {
+                setLoading(true);
+
+                // 1. Charger le profil
+                const restauData = await getRestaurantProfile();
+                setProfile({
+                    nom: restauData.nom || '',
+                    adresse: restauData.adresse || '',
+                    cuisine: restauData.cuisine || '',
+                    description: restauData.description || ''
+                });
+
+                // 2. Charger les réservations (si le profil existe)
+                try {
+                    const resData = await getRestaurantReservations();
+                    console.log("Réservations chargées:", resData);
+                    setReservations(resData);
+                } catch (resErr) {
+                    console.error("Erreur chargement réservations", resErr);
+                }
+
+                // 3. Charger le plan (si besoin, ou on utilise les tables du profil si incluses)
+                // const plan = await getRestaurantPlan(); ...
+
+            } catch (err) {
+                // Si l'erreur est 404, c'est que c'est un nouveau compte, on ne log pas d'erreur
+                if (err.response && err.response.status === 404) {
+                    console.log("Nouveau restaurateur : aucun profil à charger.");
+                } else {
+                    console.error("Erreur technique lors du chargement", err);
+                }
+            } finally {
+                setLoading(false);
             }
-        } finally {
-            setLoading(false);
-        }
-    };
-    loadData();
+        };
+        loadData();
     }, []);
 
     // Handlers
@@ -72,21 +89,21 @@ const RestaurantDashboard = () => {
 
     // Actions API
     const saveProfile = async () => {
-    try {
-        console.log("Envoi des données au serveur...", profile);
-        
-        const response = await updateRestaurantProfile(profile);
-        
-        // ✅ LOG DE CONFIRMATION FRONTEND
-        console.log("✅ RÉPONSE SERVEUR REÇUE :", response);
-        
-        showMsg('success', 'Profil enregistré avec succès dans la base !');
-    } catch (err) {
-        // ❌ LOG D'ERREUR FRONTEND
-        console.error("ÉCHEC DE L'ENREGISTREMENT :", err.response?.data || err.message);
-        showMsg('error', 'Erreur lors de la mise à jour.');
-    }
-};
+        try {
+            console.log("Envoi des données au serveur...", profile);
+
+            const response = await updateRestaurantProfile(profile);
+
+            // ✅ LOG DE CONFIRMATION FRONTEND
+            console.log("✅ RÉPONSE SERVEUR REÇUE :", response);
+
+            showMsg('success', 'Profil enregistré avec succès dans la base !');
+        } catch (err) {
+            // ❌ LOG D'ERREUR FRONTEND
+            console.error("ÉCHEC DE L'ENREGISTREMENT :", err.response?.data || err.message);
+            showMsg('error', 'Erreur lors de la mise à jour.');
+        }
+    };
 
     const savePlan = async () => {
         try {
@@ -208,44 +225,10 @@ const RestaurantDashboard = () => {
                             </div>
                         )}
 
-                        {/* --- TAB: TABLES --- */}
+                        {/* --- TAB: TABLES (PLAN) --- */}
                         {activeTab === 'tables' && (
                             <div className="animate-fade-in">
-                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
-                                    <h2 style={sectionTitleStyle}><Armchair color="var(--color-primary)" /> Gestion des Tables</h2>
-                                    <button onClick={addTable} className="btn btn-secondary" style={{ fontSize: '0.9rem' }}>+ Ajouter une table</button>
-                                </div>
-
-                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '20px' }}>
-                                    {tables.map((table, index) => (
-                                        <div key={index} style={tableCardStyle}>
-                                            <div style={{ textAlign: 'center', marginBottom: '10px' }}>
-                                                <div style={{ fontWeight: 700, fontSize: '1.2rem', color: '#334155' }}>Table #{table.numero}</div>
-                                            </div>
-                                            <div style={{ marginBottom: '10px' }}>
-                                                <label style={{ fontSize: '0.8rem', color: '#64748b' }}>Capacité</label>
-                                                <input
-                                                    type="number"
-                                                    value={table.capacite}
-                                                    onChange={(e) => handleTableChange(index, 'capacite', e.target.value)}
-                                                    style={{ ...inputStyle, padding: '8px' }}
-                                                />
-                                            </div>
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                                <input
-                                                    type="checkbox"
-                                                    checked={table.isAvailable}
-                                                    onChange={(e) => handleTableChange(index, 'isAvailable', e.target.checked)}
-                                                    style={{ width: '18px', height: '18px' }}
-                                                />
-                                                <span style={{ fontSize: '0.9rem' }}>Disponible</span>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                                <button onClick={savePlan} className="btn btn-primary" style={{ marginTop: '30px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                    <Save size={18} /> Sauvegarder le Plan
-                                </button>
+                                <PlanEditor />
                             </div>
                         )}
 
@@ -262,9 +245,9 @@ const RestaurantDashboard = () => {
                                             <div key={res._id || res.id} style={reservationCardStyle}>
                                                 <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
                                                     <div style={dateBoxStyle}>
-                                                        {new Date(res.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                                        {new Date(res.dateTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                                         <div style={{ fontSize: '0.8rem', fontWeight: 500 }}>
-                                                            {new Date(res.date).toLocaleDateString()}
+                                                            {new Date(res.dateTime).toLocaleDateString()}
                                                         </div>
                                                     </div>
                                                     <div>
@@ -272,7 +255,7 @@ const RestaurantDashboard = () => {
                                                             {res.user ? res.user.nom : 'Client Inconnu'}
                                                         </h3>
                                                         <p style={{ margin: '5px 0 0 0', color: '#64748b', fontSize: '0.9rem' }}>
-                                                            {res.nombrePersonnes} personnes • {res.user?.telephone}
+                                                            {res.numberOfGuests} personnes • {res.user?.telephone}
                                                         </p>
                                                     </div>
                                                 </div>

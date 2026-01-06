@@ -7,7 +7,7 @@ exports.getRestaus = async (req, res) => {
         const restaurants = await Restau.find({ status: 'valide' });
         //NE RENVOIE QUE LE TABLEAU. 
         //Ne mets pas de { message: "..." }, sinon .map() ne marchera pas.
-        res.json(restaurants); 
+        res.json(restaurants);
     } catch (err) {
         res.status(500).json({ msg: "Erreur serveur" });
     }
@@ -26,7 +26,7 @@ exports.createOrUpdateProfile = async (req, res) => {
             // Update
             restau = await Restau.findOneAndUpdate(
                 { owner: req.user.id },
-                { $set: { nom, adresse, cuisine, description, status: 'valide' } }, 
+                { $set: { nom, adresse, cuisine, description, status: 'valide' } },
                 { new: true }
             );
             console.log("RESTAURANT MIS À JOUR EN BASE :", restau);
@@ -49,7 +49,7 @@ exports.createOrUpdateProfile = async (req, res) => {
         console.error("ERREUR LORS DE L'ENREGISTREMENT :", err.message);
         res.status(500).json({ msg: 'Erreur serveur' });
     }
-    };
+};
 
 
 // @desc    Récupérer les infos du profil restaurant
@@ -63,12 +63,12 @@ exports.getProfile = async (req, res) => {
         }
 
         const restau = await Restau.findOne({ owner: req.user.id });
-        
+
         if (!restau) {
             // Renvoyer 404 est normal pour un nouveau restaurateur
             return res.status(404).json({ msg: 'Aucun restaurant trouvé' });
         }
-        
+
         res.json(restau);
     } catch (err) {
         console.error("ERREUR PROFIL:", err.message);
@@ -100,19 +100,27 @@ exports.updatePlan = async (req, res) => {
 // @desc    Récupérer toutes les réservations pour ce restaurant
 // @route   GET /api/restau/profil/reservation
 // @access  Privé (Restaurateur)
+// @desc    Récupérer toutes les réservations pour ce restaurant
+// @route   GET /api/restau/profil/reservation
+// @access  Privé (Restaurateur)
 exports.getRestauReservations = async (req, res) => {
     try {
+        console.log("Fetching reservations for owner:", req.user.id);
         const restau = await Restau.findOne({ owner: req.user.id });
         if (!restau) {
+            console.log("Restau not found for this owner.");
             return res.status(404).json({ msg: 'Restaurant non trouvé' });
         }
+        console.log("Found Restau:", restau._id.toString());
 
-        const reservations = await Reservation.find({ restau: restau.id })
+        const reservations = await Reservation.find({ restau: restau._id })
             .populate('user', ['nom', 'email', 'telephone']);
+
+        console.log(`Found ${reservations.length} reservations for restau ${restau._id}`);
 
         res.json(reservations);
     } catch (err) {
-        console.error(err.message);
+        console.error("Error fetching reservations:", err.message);
         res.status(500).send('Erreur serveur');
     }
 };

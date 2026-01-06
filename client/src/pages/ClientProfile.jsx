@@ -1,9 +1,11 @@
 import React, { useEffect, useState, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { getClientReservations } from '../services/api';
 
 const ClientProfile = () => {
     const { user, logout } = useContext(AuthContext);
+    const navigate = useNavigate();
     const [reservations, setReservations] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -11,6 +13,7 @@ const ClientProfile = () => {
         const fetchReservations = async () => {
             try {
                 const data = await getClientReservations();
+                console.log("RESERVATIONS CLIENT RECUES :", data);
                 setReservations(data);
             } catch (err) {
                 console.error("Erreur chargement réservations", err);
@@ -26,6 +29,11 @@ const ClientProfile = () => {
 
     if (!user) return <div className="container" style={{ paddingTop: '100px' }}>Veuillez vous connecter.</div>;
 
+    const handleLogout = () => {
+        logout();
+        navigate('/login');
+    };
+
     return (
         <div className="container" style={{ paddingTop: '100px', paddingBottom: '50px' }}>
             <div className="flex-between" style={{ alignItems: 'flex-start', marginBottom: '40px' }}>
@@ -37,7 +45,7 @@ const ClientProfile = () => {
                         <span style={{ display: 'block' }}>📞 {user.telephone || user.phone || 'Non renseigné'}</span>
                     </div>
                 </div>
-                <button onClick={logout} className="btn btn-secondary" style={{ padding: '8px 16px', fontSize: '0.9rem' }}>
+                <button onClick={handleLogout} className="btn btn-secondary" style={{ padding: '8px 16px', fontSize: '0.9rem' }}>
                     Se déconnecter
                 </button>
             </div>
@@ -67,7 +75,7 @@ const ClientProfile = () => {
                                 <div className="flex-between">
                                     <div>
                                         <h4 style={{ fontSize: '1.1rem', marginBottom: '5px' }}>
-                                            {res.restau?.name || 'Restaurant inconnu'}
+                                            {res.restau?.nom || 'Restaurant inconnu'}
                                         </h4>
                                         <p style={{ fontSize: '0.9rem', color: '#64748b' }}>
                                             {new Date(res.dateTime).toLocaleDateString()} à {new Date(res.dateTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}

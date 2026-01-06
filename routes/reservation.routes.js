@@ -14,9 +14,9 @@ router.get('/client/:id/plan', reservationController.getRestauPlan);
 
 
 // Post : /api/reservation : Créer une nouvelle réservation
-router.post('/reservation', reservationController.createReservation);
+router.post('/reservation', authMiddleware, reservationController.createReservation);
 
 // Get : /api/reservation/profil : Liste réservation des clients.
-router.get('/reservation/profil', reservationController.getClientReservations);
+router.get('/reservation/profil', authMiddleware, reservationController.getClientReservations);
 
 module.exports = router;

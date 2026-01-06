@@ -1,0 +1,81 @@
+
+.plan-container {
+    position: relative;
+    width: 100%;
+    height: 600px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: #f0f4f8;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    user-select: none;
+}
+
+.plan-toolbar {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+    background: #fff;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 1rem;
+    align-items: center;
+}
+
+.table-node {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: grab;
+    transition: transform 0.1s;
+    z-index: 10;
+}
+
+.table-node:active {
+    cursor: grabbing;
+}
+
+.table-shape {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    border: 2px solid #333;
+    font-weight: bold;
+    color: #333;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.table-shape.round {
+    border-radius: 50%;
+}
+
+.table-shape.rect {
+    border-radius: 4px;
+}
+
+.table-info {
+    margin-top: 4px;
+    font-size: 0.75rem;
+    background: rgba(255,255,255,0.8);
+    padding: 2px 4px;
+    border-radius: 4px;
+    white-space: nowrap;
+}
+
+.table-selected .table-shape {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 2px #93c5fd;
+}
+
+.viewer-mode .table-node {
+    cursor: pointer;
+}
+
+.viewer-mode .table-node:hover .table-shape {
+    transform: scale(1.05);
+    border-color: #2563eb;
+}
