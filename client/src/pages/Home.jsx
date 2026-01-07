@@ -5,6 +5,7 @@ import { getRestaurants } from '../services/api';
 
 const Home = () => {
     const [restaurants, setRestaurants] = useState([]);
+    const [searchTerm, setSearchTerm] = useState('');
 
     useEffect(() => {
         const loadRestos = async () => {
@@ -15,8 +16,18 @@ const Home = () => {
         };
         loadRestos();
     }, []);
-    console.log("Type de restaurants :", typeof restaurants);
-    console.log("Contenu de restaurants :", restaurants);
+
+    // Filtrage des restaurants
+    const filteredRestaurants = restaurants.filter(restau => {
+        const term = searchTerm.toLowerCase();
+        return (
+            restau.nom?.toLowerCase().includes(term) ||
+            restau.cuisine?.toLowerCase().includes(term) ||
+            restau.adresse?.toLowerCase().includes(term) ||
+            restau.adress?.city?.toLowerCase().includes(term)
+        );
+    });
+
     return (
         <div style={{ overflowX: 'hidden' }}>
             {/* --- HERO SECTION --- */}
@@ -125,6 +136,8 @@ const Home = () => {
                             <div style={{ flex: 1, position: 'relative', display: 'flex', alignItems: 'center', paddingLeft: '20px' }}>
                                 <Search size={22} color="#f97316" />
                                 <input type="text" placeholder="Restaurant, cuisine, ville..."
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
                                     style={{
                                         width: '100%', padding: '14px 16px', border: 'none',
                                         fontSize: '1rem', fontFamily: 'inherit', outline: 'none', background: 'transparent', color: '#1e293b'
@@ -154,47 +167,48 @@ const Home = () => {
 
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '30px' }}>
                         {restaurants.length === 0 ? <p>Chargement des restaurants...</p> :
-                            Array.isArray(restaurants) && restaurants.map((restau, index) => (
+                            filteredRestaurants.length === 0 ? <p>Aucun restaurant trouvé pour "{searchTerm}"</p> :
+                                filteredRestaurants.map((restau, index) => (
                                     <Link key={restau._id} to={`/restaurant/${restau._id}`} style={{ textDecoration: 'none' }}>
-                                    <div className="hover-card" style={{
-                                        background: 'white', borderRadius: '24px', overflow: 'hidden', height: '100%',
-                                        display: 'flex', flexDirection: 'column', border: '1px solid #e2e8f0',
-                                        boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)'
-                                    }}>
-                                        <div style={{ height: '240px', overflow: 'hidden', position: 'relative' }}>
-                                            <img src={`https://images.unsplash.com/photo-${index % 2 === 0 ? '1559339352-11d035aa65de' : '1517248135467-4c7edcad34c4'}?q=80&w=800&auto=format&fit=crop`}
-                                                alt="Restaurant"
-                                                style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.5s ease' }}
-                                                onMouseOver={e => e.currentTarget.style.transform = 'scale(1.1)'}
-                                                onMouseOut={e => e.currentTarget.style.transform = 'scale(1)'}
-                                            />
-                                            <div style={{ position: 'absolute', top: '20px', right: '20px', background: 'white', padding: '6px 14px', borderRadius: '30px', fontWeight: 800, fontSize: '0.9rem', color: '#0f172a', boxShadow: '0 4px 10px rgba(0,0,0,0.1)' }}>
-                                                ⭐ 4.8
+                                        <div className="hover-card" style={{
+                                            background: 'white', borderRadius: '24px', overflow: 'hidden', height: '100%',
+                                            display: 'flex', flexDirection: 'column', border: '1px solid #e2e8f0',
+                                            boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)'
+                                        }}>
+                                            <div style={{ height: '240px', overflow: 'hidden', position: 'relative' }}>
+                                                <img src={`https://images.unsplash.com/photo-${index % 2 === 0 ? '1559339352-11d035aa65de' : '1517248135467-4c7edcad34c4'}?q=80&w=800&auto=format&fit=crop`}
+                                                    alt="Restaurant"
+                                                    style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.5s ease' }}
+                                                    onMouseOver={e => e.currentTarget.style.transform = 'scale(1.1)'}
+                                                    onMouseOut={e => e.currentTarget.style.transform = 'scale(1)'}
+                                                />
+                                                <div style={{ position: 'absolute', top: '20px', right: '20px', background: 'white', padding: '6px 14px', borderRadius: '30px', fontWeight: 800, fontSize: '0.9rem', color: '#0f172a', boxShadow: '0 4px 10px rgba(0,0,0,0.1)' }}>
+                                                    ⭐ 4.8
+                                                </div>
+                                            </div>
+
+                                            <div style={{ padding: '24px', flex: 1, display: 'flex', flexDirection: 'column' }}>
+                                                <h3 style={{ fontSize: '1.4rem', fontWeight: 700, color: '#0f172a', margin: '0 0 8px 0' }}>
+                                                    {restau.nom || restau.nom}
+                                                </h3>
+                                                <p style={{ color: '#475569', fontSize: '1rem', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                                    <Utensils size={16} /> {restau.cuisine}
+                                                </p>
+
+                                                <div style={{ marginTop: 'auto', borderTop: '1px solid #f1f5f9', paddingTop: '15px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                    <span style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#64748b', fontSize: '0.9rem', fontWeight: 600 }}>
+                                                        <MapPin size={16} /> {restau.adresse || restau.adress?.city || 'Paris'}
+                                                    </span>
+                                                    <span className="btn" style={{
+                                                        background: '#dcfce7', color: '#166534', padding: '8px 18px', fontSize: '0.9rem', borderRadius: '12px'
+                                                    }}>
+                                                        Réserver
+                                                    </span>
+                                                </div>
                                             </div>
                                         </div>
-
-                                        <div style={{ padding: '24px', flex: 1, display: 'flex', flexDirection: 'column' }}>
-                                            <h3 style={{ fontSize: '1.4rem', fontWeight: 700, color: '#0f172a', margin: '0 0 8px 0' }}>
-                                                {restau.nom || restau.nom}
-                                            </h3>
-                                            <p style={{ color: '#475569', fontSize: '1rem', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                                <Utensils size={16} /> {restau.cuisine}
-                                            </p>
-
-                                            <div style={{ marginTop: 'auto', borderTop: '1px solid #f1f5f9', paddingTop: '15px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                                <span style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#64748b', fontSize: '0.9rem', fontWeight: 600 }}>
-                                                    <MapPin size={16} /> {restau.adresse || restau.adress?.city || 'Paris'}
-                                                </span>
-                                                <span className="btn" style={{
-                                                    background: '#dcfce7', color: '#166534', padding: '8px 18px', fontSize: '0.9rem', borderRadius: '12px'
-                                                }}>
-                                                    Réserver
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </Link>
-                            ))}
+                                    </Link>
+                                ))}
                     </div>
                 </div>
             </section>

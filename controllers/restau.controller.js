@@ -114,7 +114,8 @@ exports.getRestauReservations = async (req, res) => {
         console.log("Found Restau:", restau._id.toString());
 
         const reservations = await Reservation.find({ restau: restau._id })
-            .populate('user', ['nom', 'email', 'telephone']);
+            .populate('user', ['nom', 'email', 'telephone'])
+            .populate('table', 'tableNumber'); // Populate table info
 
         console.log(`Found ${reservations.length} reservations for restau ${restau._id}`);
 

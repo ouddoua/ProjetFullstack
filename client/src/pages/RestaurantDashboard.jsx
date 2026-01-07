@@ -258,6 +258,12 @@ const RestaurantDashboard = () => {
                                                             {res.numberOfGuests} personnes • {res.user?.telephone}
                                                         </p>
                                                     </div>
+                                                    <div style={{ paddingLeft: '20px', borderLeft: '1px solid #e2e8f0' }}>
+                                                        <div style={{ fontSize: '0.8rem', color: '#64748b', textTransform: 'uppercase', fontWeight: 700 }}>Table</div>
+                                                        <div style={{ fontSize: '1.2rem', color: 'var(--color-primary)', fontWeight: 800 }}>
+                                                            #{res.table?.tableNumber || '?'}
+                                                        </div>
+                                                    </div>
                                                 </div>
 
                                                 <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
