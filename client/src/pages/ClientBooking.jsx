@@ -110,7 +110,7 @@ const ClientBooking = () => {
                         <p style={{ fontSize: '0.9em', opacity: 0.7 }}>Cliquez sur une table pour réserver</p>
                     </div>
 
-                    <div style={{ width: '100%', height: '100%', marginTop: '60px' }}>
+                    <div style={{ width: '100%', height: '100%', marginTop: '60px', overflowX: 'auto', display: 'flex', justifyContent: 'center' }}>
                         {planData && (
                             <PlanViewer
                                 plan={planData.plan}

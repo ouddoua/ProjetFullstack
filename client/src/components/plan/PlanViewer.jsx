@@ -53,9 +53,8 @@ const PlanViewer = ({ plan, tables, onTableSelect, selectedTableId }) => {
             className="plan-container relative shadow-md rounded-lg overflow-hidden border border-gray-200"
             style={{
                 backgroundImage: bgImage ? `url(${bgImage})` : 'none',
-                height: '500px', // Fixed height for viewer or responsive?
-                width: '100%',
-                backgroundColor: '#f8fafc'
+                // Removed height override, let CSS handle it
+                // Width handled by CSS class .plan-container
             }}
         >
             {!bgImage && (

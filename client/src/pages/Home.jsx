@@ -20,11 +20,18 @@ const Home = () => {
     // Filtrage des restaurants
     const filteredRestaurants = restaurants.filter(restau => {
         const term = searchTerm.toLowerCase();
+
+        const nom = (restau.nom || "").toLowerCase();
+        const cuisine = (restau.cuisine || "").toLowerCase();
+        const adresse = (restau.adresse || "").toLowerCase();
+        // Check legacy or alternate field names safely
+        const city = (restau.adress && restau.adress.city) ? restau.adress.city.toLowerCase() : "";
+
         return (
-            restau.nom?.toLowerCase().includes(term) ||
-            restau.cuisine?.toLowerCase().includes(term) ||
-            restau.adresse?.toLowerCase().includes(term) ||
-            restau.adress?.city?.toLowerCase().includes(term)
+            nom.includes(term) ||
+            cuisine.includes(term) ||
+            adresse.includes(term) ||
+            city.includes(term)
         );
     });
 

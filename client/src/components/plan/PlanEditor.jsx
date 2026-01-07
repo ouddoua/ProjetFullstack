@@ -222,34 +222,35 @@ const PlanEditor = () => {
                 </div>
             </div>
 
-            <div
-                className="plan-container flex-1 bg-white relative shadow-inner mx-4 mb-4"
-                style={{
-                    backgroundImage: bgImage ? `url(${bgImage})` : 'none',
-                    minHeight: '600px'
-                }}
-                onClick={() => setSelectedTable(null)}
-            >
-                {!bgImage && (
-                    <div className="absolute inset-0 flex items-center justify-center text-gray-400">
-                        <div className="text-center">
-                            <Upload size={48} className="mx-auto mb-2 opacity-50" />
-                            <p>Uploadez un plan 2D (blueprint) pour commencer</p>
+            <div style={{ overflow: 'auto', flex: 1, display: 'flex', justifyContent: 'center', padding: '20px', background: '#e2e8f0' }}>
+                <div
+                    className="plan-container relative shadow-inner"
+                    style={{
+                        backgroundImage: bgImage ? `url(${bgImage})` : 'none',
+                    }}
+                    onClick={() => setSelectedTable(null)}
+                >
+                    {!bgImage && (
+                        <div className="absolute inset-0 flex items-center justify-center text-gray-400">
+                            <div className="text-center">
+                                <Upload size={48} className="mx-auto mb-2 opacity-50" />
+                                <p>Uploadez un plan 2D (blueprint) pour commencer</p>
+                            </div>
                         </div>
-                    </div>
-                )}
+                    )}
 
-                {tables.map(table => (
-                    <TableNode
-                        key={table.tableNumber}
-                        table={table}
-                        isSelected={selectedTable?.tableNumber === table.tableNumber}
-                        onSelect={setSelectedTable}
-                        onDelete={deleteTable}
-                        onUpdatePosition={updateTablePosition}
-                        isAvailable={table.isAvailable} // Ensure visual feedback
-                    />
-                ))}
+                    {tables.map(table => (
+                        <TableNode
+                            key={table.tableNumber}
+                            table={table}
+                            isSelected={selectedTable?.tableNumber === table.tableNumber}
+                            onSelect={setSelectedTable}
+                            onDelete={deleteTable}
+                            onUpdatePosition={updateTablePosition}
+                            isAvailable={table.isAvailable} // Ensure visual feedback
+                        />
+                    ))}
+                </div>
             </div>
             <div className="px-4 pb-4 text-xs text-gray-500">
                 Astuce : Cliquez sur une table pour modifier sa capacité. Glissez pour déplacer.

@@ -1,16 +1,21 @@
-
 .plan-container {
     position: relative;
-    width: 100%;
+    width: 800px;
+    /* Largeur fixe pour garantir que les coordonnées X/Y correspondent toujours à l'image */
     height: 600px;
+    /* Hauteur fixe */
+    min-width: 800px;
     border: 2px solid #ddd;
     border-radius: 8px;
     overflow: hidden;
     background-color: #f0f4f8;
     background-size: cover;
+    /* L'image couvre toujours le conteneur fixe de 800x600 */
     background-position: center;
     background-repeat: no-repeat;
     user-select: none;
+    margin: 0 auto;
+    /* Centrer si possible */
 }
 
 .plan-toolbar {
@@ -46,7 +51,7 @@
     border: 2px solid #333;
     font-weight: bold;
     color: #333;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .table-shape.round {
@@ -60,7 +65,7 @@
 .table-info {
     margin-top: 4px;
     font-size: 0.75rem;
-    background: rgba(255,255,255,0.8);
+    background: rgba(255, 255, 255, 0.8);
     padding: 2px 4px;
     border-radius: 4px;
     white-space: nowrap;
